@@ -13,7 +13,16 @@
         "psr-4": {
             "Klimick\\DoctrinePhpMapping\\": ["./src"],
             "Klimick\\PsalmDoctrinePhpMapping\\": ["./psalm"]
-        }
+        },
+        "files": [
+            "src/Dsl/EmbedOf.php",
+            "src/Dsl/FieldOf.php",
+            "src/Dsl/InverseSide.php",
+            "src/Dsl/ManyToManyOf.php",
+            "src/Dsl/ManyToOneOf.php",
+            "src/Dsl/OneToOneOf.php",
+            "src/Dsl/OwningSide.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
