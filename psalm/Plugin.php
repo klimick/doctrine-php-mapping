@@ -12,5 +12,11 @@ final class Plugin implements PluginEntryPointInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {
+        $stubs = glob(__DIR__ . '/stubs/Doctrine/DBAL/Types/*.phpstub') ?: [];
+
+        foreach ($stubs as $stub) {
+            $registration->addStubFile($stub);
+        }
+
     }
 }

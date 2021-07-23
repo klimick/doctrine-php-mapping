@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Doctrine\DBAL\Types;
+
+/**
+ * @extends Type<bool, bool>
+ */
+class BooleanType extends Type
+{
+}

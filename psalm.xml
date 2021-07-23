@@ -19,6 +19,7 @@
         <directory name="src"/>
         <ignoreFiles>
             <directory name="vendor"/>
+            <directory name="psalm/stubs"/>
         </ignoreFiles>
     </projectFiles>
     <plugins>
