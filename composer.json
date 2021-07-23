@@ -1,0 +1,33 @@
+{
+    "name": "klimick/doctrine-php-mapping",
+    "description": "Doctrine mapping using php",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Klimenko Andrew (klimick)",
+            "email": "klimichkartorgnusov@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Klimick\\DoctrinePhpMapping\\": ["./src"],
+            "Klimick\\PsalmDoctrinePhpMapping\\": ["./psalm"]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Klimick\\DoctrinePhpMapping\\Test\\": ["./test"]
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "doctrine/persistence": "^2.2",
+        "doctrine/orm": "^2.9"
+    },
+    "require-dev": {
+        "ext-simplexml": "*",
+        "vimeo/psalm": "^4.8",
+        "klimick/psalm-show-type": "^1.0"
+    }
+}
