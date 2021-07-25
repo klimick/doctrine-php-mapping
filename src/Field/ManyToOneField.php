@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Field;
 
-use Klimick\DoctrinePhpMapping\EntityMapping;
-use Klimick\DoctrinePhpMapping\Field\Common\CascadeTrait;
+use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
 use Klimick\DoctrinePhpMapping\Field\Common\FetchTrait;
-use Klimick\DoctrinePhpMapping\Field\Common\JoinColumn;
 use Klimick\DoctrinePhpMapping\Field\Common\JoinColumnTrait;
 
 /**
@@ -18,16 +16,14 @@ use Klimick\DoctrinePhpMapping\Field\Common\JoinColumnTrait;
 final class ManyToOneField
 {
     use FetchTrait;
-    use CascadeTrait;
     use JoinColumnTrait;
 
     /**
      * @param class-string<EntityMapping<TEntity>> $mapping
      * @param TNullable $nullable
      */
-    public function __construct(public string $mapping, bool $nullable = false)
+    public function __construct(public string $mapping, public bool $nullable = false)
     {
-        $this->joinColumn = new JoinColumn($nullable);
     }
 
     /**
@@ -35,10 +31,6 @@ final class ManyToOneField
      */
     public function nullable(): self
     {
-        $self = clone $this;
-        $self->joinColumn = $this->joinColumn->nullable();
-
-        /** @var ManyToOneField<TEntity, true> */
-        return $self;
+        return new self($this->mapping, nullable: true);
     }
 }

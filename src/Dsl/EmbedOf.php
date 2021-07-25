@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Dsl;
 
-use Klimick\DoctrinePhpMapping\EmbeddedMapping;
+use Klimick\DoctrinePhpMapping\Mapping\EmbeddedMapping;
 use Klimick\DoctrinePhpMapping\Field\EmbedField;
 
 /**

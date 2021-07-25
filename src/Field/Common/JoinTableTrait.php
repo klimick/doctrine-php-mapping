@@ -19,34 +19,16 @@ trait JoinTableTrait
     public array $inverseJoinColumns = [];
 
     /**
-     * @param non-empty-literal-string $value
+     * @param non-empty-literal-string $name
+     * @param list<JoinColumn> $joinColumns
+     * @param list<JoinColumn> $inverseJoinColumns
      */
-    public function joinTable(string $value): static
+    public function joinTable(string $name, array $joinColumns = [], array $inverseJoinColumns = []): static
     {
         $self = clone $this;
-        $self->joinTable = $value;
-
-        return $self;
-    }
-
-    /**
-     * @param non-empty-list<JoinColumn> $value
-     */
-    public function joinColumns(array $value): static
-    {
-        $self = clone $this;
-        $self->joinColumns = $value;
-
-        return $self;
-    }
-
-    /**
-     * @param non-empty-list<JoinColumn> $value
-     */
-    public function inverseJoinColumns(array $value): static
-    {
-        $self = clone $this;
-        $self->inverseJoinColumns = $value;
+        $self->joinTable = $name;
+        $self->joinColumns = $joinColumns;
+        $self->inverseJoinColumns = $inverseJoinColumns;
 
         return $self;
     }

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Field;
 
-use Klimick\DoctrinePhpMapping\EntityMapping;
+use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
 use Klimick\DoctrinePhpMapping\Field\Common\CascadeTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\FetchTrait;
-use Klimick\DoctrinePhpMapping\Field\Common\IndexByTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\JoinTableTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\OrphanRemovalTrait;
 
@@ -18,7 +17,6 @@ use Klimick\DoctrinePhpMapping\Field\Common\OrphanRemovalTrait;
 final class ManyToManyField
 {
     use FetchTrait;
-    use IndexByTrait;
     use CascadeTrait;
     use JoinTableTrait;
     use OrphanRemovalTrait;

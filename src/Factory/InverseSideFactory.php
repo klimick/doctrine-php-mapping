@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Factory;
 
-use Klimick\DoctrinePhpMapping\EntityMapping;
+use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
 use Klimick\DoctrinePhpMapping\Field\InverseSide;
 
 /**

@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Field\Common;
 
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+
 /**
  * @psalm-immutable
  */
 trait FetchTrait
 {
-    public string $fetch = 'LAZY';
+    /** @psalm-var ClassMetadataInfo::FETCH_* */
+    public int $fetch = ClassMetadataInfo::FETCH_LAZY;
 
     public function fetchLazy(): static
     {
         $self = clone $this;
-        $self->fetch = 'LAZY';
+        $self->fetch = ClassMetadataInfo::FETCH_LAZY;
 
         return $self;
     }
@@ -22,7 +25,7 @@ trait FetchTrait
     public function fetchEager(): static
     {
         $self = clone $this;
-        $self->fetch = 'EAGER';
+        $self->fetch = ClassMetadataInfo::FETCH_EAGER;
 
         return $self;
     }
@@ -30,7 +33,7 @@ trait FetchTrait
     public function fetchExtraLazy(): static
     {
         $self = clone $this;
-        $self->fetch = 'EXTRA_LAZY';
+        $self->fetch = ClassMetadataInfo::FETCH_EXTRA_LAZY;
 
         return $self;
     }

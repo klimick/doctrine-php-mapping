@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Field;
 
-use Klimick\DoctrinePhpMapping\EmbeddedMapping;
+use Klimick\DoctrinePhpMapping\Mapping\EmbeddedMapping;
 
 /**
  * @template TEmbedded of object

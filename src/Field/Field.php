@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Klimick\DoctrinePhpMapping\Field;
 
 use Doctrine\DBAL\Types\Type;
+use Klimick\DoctrinePhpMapping\Field\Common\ColumnTrait;
 
 /**
  * @template TPhpType
@@ -15,6 +16,8 @@ use Doctrine\DBAL\Types\Type;
  */
 final class Field
 {
+    use ColumnTrait;
+
     public bool $nullable = false;
     public bool $unique = false;
 

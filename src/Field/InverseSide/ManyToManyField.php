@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Field\InverseSide;
 
-use Klimick\DoctrinePhpMapping\EntityMapping;
+use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
 use Klimick\DoctrinePhpMapping\Field\Common\CascadeTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\IndexByTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\JoinTableTrait;
@@ -16,9 +16,6 @@ use Klimick\DoctrinePhpMapping\Field\Common\JoinTableTrait;
  */
 final class ManyToManyField
 {
-    use IndexByTrait;
-    use CascadeTrait;
-
     /**
      * @param class-string<EntityMapping<TEntity>> $mapping
      * @param TMappedBy $mappedBy
