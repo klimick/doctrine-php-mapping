@@ -17,7 +17,9 @@
         "files": [
             "src/Dsl/EmbedOf.php",
             "src/Dsl/FieldOf.php",
+            "src/Dsl/IdOf.php",
             "src/Dsl/InverseSide.php",
+            "src/Dsl/JoinColumn.php",
             "src/Dsl/ManyToManyOf.php",
             "src/Dsl/ManyToOneOf.php",
             "src/Dsl/OneToOneOf.php",
@@ -37,6 +39,8 @@
     "require-dev": {
         "ext-simplexml": "*",
         "vimeo/psalm": "^4.8",
-        "klimick/psalm-show-type": "^1.0"
+        "klimick/psalm-show-type": "^1.0",
+        "psr/cache": "2",
+        "symfony/cache": "^5.3"
     }
 }

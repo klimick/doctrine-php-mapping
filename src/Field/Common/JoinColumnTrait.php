@@ -9,12 +9,22 @@ namespace Klimick\DoctrinePhpMapping\Field\Common;
  */
 trait JoinColumnTrait
 {
-    public JoinColumn $joinColumn;
+    public null|JoinColumn $joinColumn = null;
 
-    public function joinColumn(JoinColumn $joinColumn): self
+    /**
+     * @psalm-param non-empty-literal-string $name
+     * @psalm-param non-empty-literal-string $referencedColumnName
+     * @psalm-param JoinColumn::ON_DELETE_* $onDelete
+     */
+    public function joinColumn(
+        string $name,
+        string $referencedColumnName = 'id',
+        bool   $unique = false,
+        string $onDelete = JoinColumn::ON_DELETE_NO_ACTION,
+    ): self
     {
         $self = clone $this;
-        $self->joinColumn = $joinColumn;
+        $self->joinColumn = new JoinColumn($name, $referencedColumnName, $unique, $onDelete);
 
         return $self;
     }

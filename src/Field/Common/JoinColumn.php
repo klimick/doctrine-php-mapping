@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Klimick\DoctrinePhpMapping\Field\Common;
 
 /**
- * @template TNullable of bool
  * @psalm-immutable
  */
 final class JoinColumn
@@ -14,53 +13,15 @@ final class JoinColumn
     public const ON_DELETE_NO_ACTION = 'NO ACTION';
     public const ON_DELETE_SET_NULL = 'SET NULL';
 
-    public ?string $name = null;
-    public string $referencedColumnName = 'id';
-    public bool $unique = false;
-    public bool $nullable;
-    /** @psalm-var JoinColumn::ON_DELETE_* */
-    public string $onDelete = self::ON_DELETE_NO_ACTION;
-
-    public function __construct(bool $nullable = false)
-    {
-        $this->nullable = $nullable;
-    }
-
-    public function referencedColumnName(string $value): self
-    {
-        $self = clone $this;
-        $self->referencedColumnName = $value;
-
-        return $this;
-    }
-
-    public function unique(): self
-    {
-        $self = clone $this;
-        $self->unique = true;
-
-        return $this;
-    }
-
     /**
-     * @internal
+     * @psalm-param non-empty-literal-string $name
+     * @psalm-param non-empty-literal-string $referencedColumnName
+     * @psalm-param JoinColumn::ON_DELETE_* $onDelete
      */
-    public function nullable(): self
-    {
-        $self = clone $this;
-        $self->nullable = true;
-
-        return $this;
-    }
-
-    /**
-     * @psalm-param JoinColumn::ON_DELETE_* $value
-     */
-    public function onDelete(string $value): self
-    {
-        $self = clone $this;
-        $self->onDelete = $value;
-
-        return $self;
-    }
+    public function __construct(
+        public string $name,
+        public string  $referencedColumnName = 'id',
+        public bool    $unique = false,
+        public string  $onDelete = self::ON_DELETE_NO_ACTION,
+    ) {}
 }
