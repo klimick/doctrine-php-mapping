@@ -158,7 +158,7 @@ final class PhpMappingDriver implements MappingDriver
                     $manyToManyMapping['indexBy'] = $field->indexBy;
                 }
 
-                if (!empty($field->orderBy)) {
+                if (null !== $field->orderBy) {
                     $manyToManyMapping['orderBy'] = $field->orderBy;
                 }
             }

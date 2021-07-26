@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Klimick\DoctrinePhpMapping\Field\Common;
 
 /**
- * @psalm-type OrderByValues = array<non-empty-literal-string, OrderBy::*>
+ * @psalm-type OrderByValues = non-empty-array<non-empty-literal-string, OrderBy::*>
  * @psalm-immutable
  */
 trait OrderByTrait
 {
-    public array $orderBy = [];
+    /** @var OrderByValues */
+    public null|array $orderBy = null;
 
     /**
      * @param OrderByValues $value
