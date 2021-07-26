@@ -14,6 +14,7 @@ use Klimick\DoctrinePhpMapping\Field\Common\JoinColumn;
 use Klimick\DoctrinePhpMapping\Field\Field;
 use Klimick\DoctrinePhpMapping\Field\ManyToManyField;
 use Klimick\DoctrinePhpMapping\Field\OneToOneField;
+use Klimick\DoctrinePhpMapping\Mapping\Inheritance\Inheritance;
 use Klimick\DoctrinePhpMapping\Mapping\MappedSuperclassMapping;
 use Klimick\DoctrinePhpMapping\Field\OwningSide;
 use Klimick\DoctrinePhpMapping\Field\InverseSide;
@@ -52,8 +53,9 @@ final class PhpMappingDriver implements MappingDriver
         $mapping = $this->mappings[$className]
             ?? throw new RuntimeException("No mapping for '{$className}' class");
 
-        self::configureMappingType($mapping, $metadata);
         self::configureFields($mapping, $metadata, $this->types);
+        self::configureInheritance($mapping, $metadata, $this->types);
+        self::configureMappingType($mapping, $metadata);
         self::configureEmbedded($mapping, $metadata);
         self::configureOneToOne($mapping, $metadata);
         self::configureOneToMany($mapping, $metadata);
@@ -68,7 +70,43 @@ final class PhpMappingDriver implements MappingDriver
 
     public function isTransient($className): bool
     {
-        return true;
+        return !array_key_exists($className, $this->mappings) ||
+            !(is_subclass_of($this->mappings[$className], EntityMapping::class) ||
+                is_subclass_of($this->mappings[$className], MappedSuperclassMapping::class));
+    }
+
+    /**
+     * @param MappingClass $mapping
+     * @param array<class-string<Type>, non-empty-literal-string> $types
+     */
+    private static function configureInheritance(string $mapping, ClassMetadataInfo $metadata, array $types): void
+    {
+        if (!is_subclass_of($mapping, EntityMapping::class)) {
+            return;
+        }
+
+        $inheritance = $mapping::inheritance();
+
+        if (!($inheritance instanceof Inheritance)) {
+            return;
+        }
+
+        $type = $types[$inheritance->discriminator->type]
+            ?? throw new RuntimeException("Type '{$inheritance->discriminator->type}' is not registered");
+
+        $metadata->setInheritanceType(match ($inheritance->inheritanceType) {
+            Inheritance::TYPE_JOINED => ClassMetadataInfo::INHERITANCE_TYPE_JOINED,
+            Inheritance::TYPE_SINGLE_TABLE => ClassMetadataInfo::INHERITANCE_TYPE_SINGLE_TABLE,
+        });
+
+        $metadata->setDiscriminatorColumn([
+            'type' => $type,
+            'name' => $inheritance->discriminatorName,
+            'length' => $inheritance->discriminator->options['length'] ?? 255,
+            'columnDefinition' => $inheritance->discriminator->options['columnDefinition'] ?? null,
+        ]);
+
+        $metadata->setDiscriminatorMap(array_map(fn($mapping) => $mapping::forClass(), $inheritance->discriminatorMap));
     }
 
     /**
@@ -220,7 +258,8 @@ final class PhpMappingDriver implements MappingDriver
      */
     private static function configureFields(string $mapping, ClassMetadataInfo $metadata, array $types): void
     {
-        $identifier = [];
+        /** @var list<mixed> $identifier */
+        $identifier = $metadata->getIdentifier();
 
         foreach ($mapping::fields() as $name => $field) {
             $type = $types[$field->type]
@@ -268,7 +307,7 @@ final class PhpMappingDriver implements MappingDriver
             $metadata->mapEmbedded([
                 'fieldName' => $name,
                 'class' => $embed->embedded::forClass(),
-                'columnPrefix' => $embed->prefix,
+                'columnPrefix' => null !== $embed->prefix ? $embed->prefix : false,
             ]);
         }
     }

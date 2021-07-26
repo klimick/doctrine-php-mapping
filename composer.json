@@ -20,10 +20,12 @@
             "src/Dsl/IdOf.php",
             "src/Dsl/InverseSide.php",
             "src/Dsl/JoinColumn.php",
+            "src/Dsl/JoinedTableInheritance.php",
             "src/Dsl/ManyToManyOf.php",
             "src/Dsl/ManyToOneOf.php",
             "src/Dsl/OneToOneOf.php",
-            "src/Dsl/OwningSide.php"
+            "src/Dsl/OwningSide.php",
+            "src/Dsl/SingleTableInheritance.php"
         ]
     },
     "autoload-dev": {

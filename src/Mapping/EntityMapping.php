@@ -12,6 +12,8 @@ use Klimick\DoctrinePhpMapping\Field\ManyToOneField;
 use Klimick\DoctrinePhpMapping\Field\InverseSide;
 use Klimick\DoctrinePhpMapping\Field\OwningSide;
 use Klimick\DoctrinePhpMapping\Field\OneToOneField;
+use Klimick\DoctrinePhpMapping\Mapping\Inheritance\InheritanceInterface;
+use Klimick\DoctrinePhpMapping\Mapping\Inheritance\NoInheritance;
 
 /**
  * @template-covariant TEntity of object
@@ -26,6 +28,11 @@ abstract class EntityMapping
      * @return class-string<TEntity>
      */
     abstract public static function forClass(): string;
+
+    public static function inheritance(): InheritanceInterface
+    {
+        return NoInheritance::instance();
+    }
 
     /**
      * @return array<non-empty-literal-string, IdField | Field>
