@@ -70,9 +70,7 @@ final class PhpMappingDriver implements MappingDriver
 
     public function isTransient($className): bool
     {
-        return !array_key_exists($className, $this->mappings) ||
-            !(is_subclass_of($this->mappings[$className], EntityMapping::class) ||
-                is_subclass_of($this->mappings[$className], MappedSuperclassMapping::class));
+        return !array_key_exists($className, $this->mappings) || $this->mappings[$className]::isTransient();
     }
 
     /**

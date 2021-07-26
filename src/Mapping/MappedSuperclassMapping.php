@@ -22,6 +22,11 @@ abstract class MappedSuperclassMapping
     {
     }
 
+    final public static function isTransient(): bool
+    {
+        return false;
+    }
+
     /**
      * @return class-string<TEntity>
      */

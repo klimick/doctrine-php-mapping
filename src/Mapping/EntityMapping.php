@@ -24,6 +24,11 @@ abstract class EntityMapping
     {
     }
 
+    final public static function isTransient(): bool
+    {
+        return false;
+    }
+
     /**
      * @return class-string<TEntity>
      */

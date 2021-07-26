@@ -15,6 +15,11 @@ abstract class EmbeddedMapping
     {
     }
 
+    final public static function isTransient(): bool
+    {
+        return true;
+    }
+
     /**
      * @return class-string<TEmbedded>
      */
