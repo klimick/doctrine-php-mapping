@@ -153,6 +153,14 @@ final class PhpMappingDriver implements MappingDriver
             if ($field instanceof ManyToManyField) {
                 $manyToManyMapping['fetch'] = $field->fetch;
                 $manyToManyMapping['orphanRemoval'] = $field->orphanRemoval;
+
+                if (null !== $field->indexBy) {
+                    $manyToManyMapping['indexBy'] = $field->indexBy;
+                }
+
+                if (!empty($field->orderBy)) {
+                    $manyToManyMapping['orderBy'] = $field->orderBy;
+                }
             }
 
             if ($field instanceof ManyToManyField || $field instanceof OwningSide\ManyToManyField) {
