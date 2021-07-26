@@ -10,6 +10,7 @@ use Klimick\DoctrinePhpMapping\Field\Common\ColumnTrait;
 /**
  * @template TPhpType
  * @template TDatabaseType
+ * @template TOptions of array<string, mixed>
  *
  * @psalm-immutable
  */
@@ -17,19 +18,19 @@ final class IdField
 {
     use ColumnTrait;
 
-    /** @var array<string, mixed> */
-    public array $options = [];
+    /** @var null|TOptions */
+    public ?array $options = null;
 
     /**
-     * @param class-string<Type<TPhpType, TDatabaseType>> $type
+     * @param class-string<Type<TPhpType, TDatabaseType, TOptions>> $type
      */
     public function __construct(public string $type)
     {
     }
 
     /**
-     * @param array<string, mixed> $value
-     * @return IdField<TPhpType, TDatabaseType>
+     * @param TOptions $value
+     * @return IdField<TPhpType, TDatabaseType, TOptions>
      */
     public function options(array $value): self
     {

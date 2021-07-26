@@ -11,6 +11,7 @@ use Klimick\DoctrinePhpMapping\Field\Common\ColumnTrait;
  * @template TPhpType
  * @template TDatabaseType
  * @template TNullable of bool
+ * @template TOptions of array<string, mixed>
  *
  * @psalm-immutable
  */
@@ -21,11 +22,11 @@ final class Field
     public bool $nullable = false;
     public bool $unique = false;
 
-    /** @var array<string, mixed> */
-    public array $options = [];
+    /** @var null|TOptions */
+    public ?array $options = null;
 
     /**
-     * @param class-string<Type<TPhpType, TDatabaseType>> $type
+     * @param class-string<Type<TPhpType, TDatabaseType, TOptions>> $type
      * @param TNullable $nullable
      */
     public function __construct(public string $type, bool $nullable = false)
@@ -34,7 +35,7 @@ final class Field
     }
 
     /**
-     * @return Field<TPhpType, TDatabaseType, true>
+     * @return Field<TPhpType, TDatabaseType, true, TOptions>
      */
     public function nullable(): self
     {
@@ -46,7 +47,7 @@ final class Field
     }
 
     /**
-     * @return Field<TPhpType, TDatabaseType, TNullable>
+     * @return Field<TPhpType, TDatabaseType, TNullable, TOptions>
      */
     public function unique(): self
     {
@@ -57,8 +58,8 @@ final class Field
     }
 
     /**
-     * @param array<string, mixed> $value
-     * @return Field<TPhpType, TDatabaseType, TNullable>
+     * @param TOptions $value
+     * @return Field<TPhpType, TDatabaseType, TNullable, TOptions>
      */
     public function options(array $value): self
     {

@@ -22,9 +22,10 @@ final class InheritanceFactory
     /**
      * @template TPhpType of string
      * @template TDatabaseType of string
+     * @template TOptions of array<string, mixed>
      *
      * @param non-empty-literal-string $name
-     * @param Field<TPhpType, TDatabaseType, false> $type
+     * @param Field<TPhpType, TDatabaseType, false, TOptions> $type
      * @return InheritanceMapFactory<TPhpType, TDatabaseType>
      */
     public function discriminator(string $name, Field $type): InheritanceMapFactory

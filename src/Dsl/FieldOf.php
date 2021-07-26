@@ -10,9 +10,10 @@ use Klimick\DoctrinePhpMapping\Field\Field;
 /**
  * @template TPhpType
  * @template TDatabaseType
+ * @template TOptions of array<string, mixed>
  *
- * @param class-string<Type<TPhpType, TDatabaseType>> $type
- * @return Field<TPhpType, TDatabaseType, false>
+ * @param class-string<Type<TPhpType, TDatabaseType, TOptions>> $type
+ * @return Field<TPhpType, TDatabaseType, false, TOptions>
  */
 function fieldOf(string $type): Field
 {

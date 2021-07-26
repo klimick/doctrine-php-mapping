@@ -21,6 +21,9 @@ use Klimick\DoctrinePhpMapping\Field\InverseSide;
 use RuntimeException;
 
 /**
+ * @see Type
+ *
+ * @psalm-type DbalType = Type<mixed, mixed, array<string, mixed>>
  * @psalm-type EntityClass = class-string
  *
  * @psalm-type MappingClass
@@ -30,20 +33,12 @@ use RuntimeException;
  */
 final class PhpMappingDriver implements MappingDriver
 {
-    /** @var array<EntityClass, MappingClass> */
-    private array $mappings;
-
-    /** @var array<class-string<Type>, non-empty-literal-string> */
-    private array $types;
-
     /**
      * @param array<EntityClass, MappingClass> $mappings
-     * @param array<class-string<Type>, non-empty-literal-string> $types
+     * @param array<class-string<DbalType>, non-empty-literal-string> $types
      */
-    public function __construct(array $mappings, array $types)
+    public function __construct(private array $mappings, private array $types)
     {
-        $this->mappings = $mappings;
-        $this->types = $types;
     }
 
     public function loadMetadataForClass($className, ClassMetadata $metadata): void
@@ -75,7 +70,7 @@ final class PhpMappingDriver implements MappingDriver
 
     /**
      * @param MappingClass $mapping
-     * @param array<class-string<Type>, non-empty-literal-string> $types
+     * @param array<class-string<DbalType>, non-empty-literal-string> $types
      */
     private static function configureInheritance(string $mapping, ClassMetadataInfo $metadata, array $types): void
     {
@@ -252,7 +247,7 @@ final class PhpMappingDriver implements MappingDriver
 
     /**
      * @param MappingClass $mapping
-     * @param array<class-string<Type>, non-empty-literal-string> $types
+     * @param array<class-string<DbalType>, non-empty-literal-string> $types
      */
     private static function configureFields(string $mapping, ClassMetadataInfo $metadata, array $types): void
     {
@@ -269,17 +264,19 @@ final class PhpMappingDriver implements MappingDriver
                     'type' => $type,
                     'unique' => $field->unique,
                     'nullable' => $field->nullable,
-                    'options' => $field->options,
                 ];
             } else {
                 $fieldMapping = [
                     'id' => true,
                     'fieldName' => $name,
                     'type' => $type,
-                    'options' => $field->options,
                 ];
 
                 $identifier[] = $name;
+            }
+
+            if (null !== $field->options) {
+                $fieldMapping['options'] = $field->options;
             }
 
             if (null !== $field->column) {

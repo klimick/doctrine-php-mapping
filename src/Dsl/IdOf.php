@@ -10,9 +10,10 @@ use Klimick\DoctrinePhpMapping\Field\IdField;
 /**
  * @template TPhpType
  * @template TDatabaseType
+ * @template TOptions of array<string, mixed>
  *
- * @param class-string<Type<TPhpType, TDatabaseType>> $type
- * @return IdField<TPhpType, TDatabaseType>
+ * @param class-string<Type<TPhpType, TDatabaseType, TOptions>> $type
+ * @return IdField<TPhpType, TDatabaseType, TOptions>
  */
 function idOf(string $type): IdField
 {

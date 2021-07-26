@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\DBAL\Types;
 
 /**
- * @extends Type<array, string>
+ * @extends Type<array, string, array<string, mixed>>
  */
 class JsonType extends Type
 {

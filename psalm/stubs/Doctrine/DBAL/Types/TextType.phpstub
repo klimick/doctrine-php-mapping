@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\DBAL\Types;
 
 /**
- * @extends Type<string, string>
+ * @extends Type<string, string, array{length?: positive-int}>
  */
 class TextType extends Type
 {

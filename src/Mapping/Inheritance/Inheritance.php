@@ -19,7 +19,7 @@ final class Inheritance implements InheritanceInterface
 
     /**
      * @psalm-param Inheritance::TYPE_* $inheritanceType
-     * @param Field<TPhpType, TDatabaseType, false> $discriminator
+     * @param Field<TPhpType, TDatabaseType, false, array<string, mixed>> $discriminator
      * @param non-empty-literal-string $discriminatorName
      * @param non-empty-array<non-empty-literal-string, class-string<EntityMapping>> $discriminatorMap
      */

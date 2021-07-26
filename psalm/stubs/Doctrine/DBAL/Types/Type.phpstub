@@ -10,9 +10,19 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 /**
  * @template TPhpValue
  * @template TDatabaseValue
+ * @template TOptions of array<string, mixed>
  */
 abstract class Type
 {
+    /**
+     * @psalm-param TOptions $column
+     * @psalm-return string
+     */
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    {
+        throw new RuntimeException('???');
+    }
+
     /**
      * @psalm-param null|TPhpValue $value
      * @psalm-return null|TDatabaseValue

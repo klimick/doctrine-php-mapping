@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\DBAL\Types;
 
 /**
- * @extends Type<float, float>
+ * @extends Type<float, float, array{unsigned?: bool}>
  */
 class FloatType extends Type
 {

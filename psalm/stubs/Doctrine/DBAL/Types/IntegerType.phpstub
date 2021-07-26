@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\DBAL\Types;
 
 /**
- * @extends Type<int, int>
+ * @extends Type<int, int, array{autoincrement?: bool}>
  */
 class IntegerType extends Type
 {

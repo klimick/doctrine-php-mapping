@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\DBAL\Types;
 
 /**
- * @extends Type<bool, bool>
+ * @extends Type<bool, bool, array<string, mixed>>
  */
 class BooleanType extends Type
 {
