@@ -15,15 +15,15 @@
             "Klimick\\PsalmDoctrinePhpMapping\\": ["./psalm"]
         },
         "files": [
-            "src/Dsl/EmbedOf.php",
-            "src/Dsl/FieldOf.php",
-            "src/Dsl/IdOf.php",
+            "src/Dsl/Embed.php",
+            "src/Dsl/Field.php",
+            "src/Dsl/Id.php",
             "src/Dsl/InverseSide.php",
             "src/Dsl/JoinColumn.php",
             "src/Dsl/JoinedTableInheritance.php",
-            "src/Dsl/ManyToManyOf.php",
-            "src/Dsl/ManyToOneOf.php",
-            "src/Dsl/OneToOneOf.php",
+            "src/Dsl/ManyToMany.php",
+            "src/Dsl/ManyToOne.php",
+            "src/Dsl/OneToOne.php",
             "src/Dsl/OwningSide.php",
             "src/Dsl/SingleTableInheritance.php"
         ]

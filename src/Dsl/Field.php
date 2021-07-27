@@ -15,7 +15,7 @@ use Klimick\DoctrinePhpMapping\Field\Field;
  * @param class-string<Type<TPhpType, TDatabaseType, TOptions>> $type
  * @return Field<TPhpType, TDatabaseType, false, TOptions>
  */
-function fieldOf(string $type): Field
+function field(string $type): Field
 {
     return new Field($type);
 }

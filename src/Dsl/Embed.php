@@ -13,7 +13,7 @@ use Klimick\DoctrinePhpMapping\Field\EmbedField;
  * @param class-string<EmbeddedMapping<TEmbedded>> $embedded
  * @return EmbedField<TEmbedded>
  */
-function embedOf(string $embedded): EmbedField
+function embed(string $embedded): EmbedField
 {
     return new EmbedField($embedded);
 }

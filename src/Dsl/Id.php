@@ -15,7 +15,7 @@ use Klimick\DoctrinePhpMapping\Field\IdField;
  * @param class-string<Type<TPhpType, TDatabaseType, TOptions>> $type
  * @return IdField<TPhpType, TDatabaseType, TOptions>
  */
-function idOf(string $type): IdField
+function id(string $type): IdField
 {
     return new IdField($type);
 }

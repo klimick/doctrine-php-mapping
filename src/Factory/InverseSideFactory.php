@@ -26,7 +26,7 @@ final class InverseSideFactory
      * @param class-string<EntityMapping<TEntity>> $mapping
      * @return InverseSide\ManyToManyField<TEntity, TMappedBy>
      */
-    public function manyToManyOf(string $mapping): InverseSide\ManyToManyField
+    public function manyToMany(string $mapping): InverseSide\ManyToManyField
     {
         return new InverseSide\ManyToManyField($mapping, $this->mappedBy);
     }
@@ -37,7 +37,7 @@ final class InverseSideFactory
      * @param class-string<EntityMapping<TEntity>> $mapping
      * @return InverseSide\OneToManyField<TEntity, TMappedBy>
      */
-    public function oneToManyOf(string $mapping): InverseSide\OneToManyField
+    public function oneToMany(string $mapping): InverseSide\OneToManyField
     {
         return new InverseSide\OneToManyField($mapping, $this->mappedBy);
     }
@@ -48,7 +48,7 @@ final class InverseSideFactory
      * @param class-string<EntityMapping<TEntity>> $mapping
      * @return InverseSide\OneToOneField<TEntity, TMappedBy>
      */
-    public function oneToOneOf(string $mapping): InverseSide\OneToOneField
+    public function oneToOne(string $mapping): InverseSide\OneToOneField
     {
         return new InverseSide\OneToOneField($mapping, $this->mappedBy);
     }

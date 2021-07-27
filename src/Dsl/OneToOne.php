@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Klimick\DoctrinePhpMapping\Dsl;
 
 use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
-use Klimick\DoctrinePhpMapping\Field\ManyToOneField;
+use Klimick\DoctrinePhpMapping\Field\OneToOneField;
 
 /**
  * @template TEntity of object
  *
  * @param class-string<EntityMapping<TEntity>> $mapping
- * @return ManyToOneField<TEntity, false>
+ * @return OneToOneField<TEntity, false>
  */
-function manyToOneOf(string $mapping): ManyToOneField
+function oneToOne(string $mapping): OneToOneField
 {
-    return new ManyToOneField($mapping);
+    return new OneToOneField($mapping);
 }
