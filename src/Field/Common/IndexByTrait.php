@@ -12,7 +12,7 @@ trait IndexByTrait
     public null|string $indexBy = null;
 
     /**
-     * @param non-empty-string $value
+     * @param non-empty-literal-string $value
      */
     public function indexBy(string $value): static
     {

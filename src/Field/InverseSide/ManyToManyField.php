@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Field\InverseSide;
 
+use Klimick\DoctrinePhpMapping\Field\Common\OrderByTrait;
 use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
-use Klimick\DoctrinePhpMapping\Field\Common\CascadeTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\IndexByTrait;
-use Klimick\DoctrinePhpMapping\Field\Common\JoinTableTrait;
 
 /**
  * @template TEntity of object
@@ -16,6 +15,9 @@ use Klimick\DoctrinePhpMapping\Field\Common\JoinTableTrait;
  */
 final class ManyToManyField
 {
+    use IndexByTrait;
+    use OrderByTrait;
+
     /**
      * @param class-string<EntityMapping<TEntity>> $mapping
      * @param TMappedBy $mappedBy

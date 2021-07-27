@@ -153,14 +153,6 @@ final class PhpMappingDriver implements MappingDriver
             if ($field instanceof ManyToManyField) {
                 $manyToManyMapping['fetch'] = $field->fetch;
                 $manyToManyMapping['orphanRemoval'] = $field->orphanRemoval;
-
-                if (null !== $field->indexBy) {
-                    $manyToManyMapping['indexBy'] = $field->indexBy;
-                }
-
-                if (null !== $field->orderBy) {
-                    $manyToManyMapping['orderBy'] = $field->orderBy;
-                }
             }
 
             if ($field instanceof ManyToManyField || $field instanceof OwningSide\ManyToManyField) {
@@ -173,6 +165,14 @@ final class PhpMappingDriver implements MappingDriver
                         'inverseJoinColumns' => array_map(fn($c) => self::joinColumnToArray($c), $field->inverseJoinColumns),
                     ];
                 }
+            }
+
+            if (null !== $field->indexBy) {
+                $manyToManyMapping['indexBy'] = $field->indexBy;
+            }
+
+            if (null !== $field->orderBy) {
+                $manyToManyMapping['orderBy'] = $field->orderBy;
             }
 
             $metadata->mapManyToMany($manyToManyMapping);

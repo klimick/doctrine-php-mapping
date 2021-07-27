@@ -10,14 +10,13 @@ namespace Klimick\DoctrinePhpMapping\Field\Common;
  */
 trait OrderByTrait
 {
-    /** @var OrderByValues */
+    /** @var null|OrderByValues */
     public null|array $orderBy = null;
 
     /**
      * @param OrderByValues $value
-     * @return $this
      */
-    public function orderBy(array $value): self
+    public function orderBy(array $value): static
     {
         $self = clone $this;
         $self->orderBy = $value;
