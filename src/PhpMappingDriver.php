@@ -140,6 +140,7 @@ final class PhpMappingDriver implements MappingDriver
             $manyToManyMapping = [
                 'fieldName' => $name,
                 'targetEntity' => $field->mapping::forClass(),
+                'fetch' => $field->fetch,
             ];
 
             if ($field instanceof InverseSide\ManyToManyField) {
@@ -151,7 +152,6 @@ final class PhpMappingDriver implements MappingDriver
             }
 
             if ($field instanceof ManyToManyField) {
-                $manyToManyMapping['fetch'] = $field->fetch;
                 $manyToManyMapping['orphanRemoval'] = $field->orphanRemoval;
             }
 

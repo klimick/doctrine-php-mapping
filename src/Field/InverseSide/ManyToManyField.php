@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Klimick\DoctrinePhpMapping\Field\InverseSide;
 
+use Klimick\DoctrinePhpMapping\Field\Common\FetchTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\OrderByTrait;
 use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
 use Klimick\DoctrinePhpMapping\Field\Common\IndexByTrait;
@@ -15,6 +16,7 @@ use Klimick\DoctrinePhpMapping\Field\Common\IndexByTrait;
  */
 final class ManyToManyField
 {
+    use FetchTrait;
     use IndexByTrait;
     use OrderByTrait;
 
