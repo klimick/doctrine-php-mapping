@@ -2612,16 +2612,16 @@
         },
         {
             "name": "klimick/psalm-show-type",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/klimick/psalm-show-type.git",
-                "reference": "d11a4f73bc34bcc074f0ed2c79cb43423d9fd67a"
+                "reference": "9314ccf722f53d7c0fcdc1e62dc96c80ae997f55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/klimick/psalm-show-type/zipball/d11a4f73bc34bcc074f0ed2c79cb43423d9fd67a",
-                "reference": "d11a4f73bc34bcc074f0ed2c79cb43423d9fd67a",
+                "url": "https://api.github.com/repos/klimick/psalm-show-type/zipball/9314ccf722f53d7c0fcdc1e62dc96c80ae997f55",
+                "reference": "9314ccf722f53d7c0fcdc1e62dc96c80ae997f55",
                 "shasum": ""
             },
             "require": {
@@ -2649,9 +2649,9 @@
             "description": "Analog for psalm-trace but with pretty print",
             "support": {
                 "issues": "https://github.com/klimick/psalm-show-type/issues",
-                "source": "https://github.com/klimick/psalm-show-type/tree/v1.0.2"
+                "source": "https://github.com/klimick/psalm-show-type/tree/v1.0.3"
             },
-            "time": "2021-05-17T19:32:53+00:00"
+            "time": "2021-07-28T17:42:48+00:00"
         },
         {
             "name": "netresearch/jsonmapper",
