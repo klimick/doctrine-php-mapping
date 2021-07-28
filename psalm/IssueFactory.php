@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Klimick\PsalmDoctrinePhpMapping;
 
-use Klimick\PsalmDoctrinePhpMapping\Issue\InvalidAssociationAtOwningSideIssue;
-use Klimick\PsalmDoctrinePhpMapping\Issue\NoMappedByFieldAtOwningSideIssue;
-use PhpParser\Node;
-use Psalm\CodeLocation;
-use Psalm\IssueBuffer;
 use Psalm\StatementsSource;
+use Klimick\PsalmDoctrinePhpMapping\Issue\Association\AssociationIssuesFactory;
 
 final class IssueFactory
 {
@@ -17,19 +13,8 @@ final class IssueFactory
     {
     }
 
-    public function noMappedByFieldAtOwningSide(Node $node, string $field, string $mapping_class, string $association_type): void
+    public function associations(): AssociationIssuesFactory
     {
-        $location = new CodeLocation($this->source, $node);
-        $issue = new NoMappedByFieldAtOwningSideIssue($location, $field, $mapping_class, $association_type);
-
-        IssueBuffer::accepts($issue, $this->source->getSuppressedIssues());
-    }
-
-    public function invalidAssociationAtOwningSide(Node $node, string $field, string $mapping_class): void
-    {
-        $location = new CodeLocation($this->source, $node);
-        $issue = new InvalidAssociationAtOwningSideIssue($location, $field, $mapping_class);
-
-        IssueBuffer::accepts($issue, $this->source->getSuppressedIssues());
+        return new AssociationIssuesFactory($this->source);
     }
 }

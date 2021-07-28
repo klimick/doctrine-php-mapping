@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Klimick\PsalmDoctrinePhpMapping;
 
-use Psalm\StatementsSource;
+use Psalm\Plugin\EventHandler\Event\AfterMethodCallAnalysisEvent;
 
 final class RaiseIssue
 {
-    public static function for(StatementsSource $source): IssueFactory
+    public static function for(AfterMethodCallAnalysisEvent $event): IssueFactory
     {
-        return new IssueFactory($source);
+        return new IssueFactory($event->getStatementsSource());
     }
 }
