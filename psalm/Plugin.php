@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Klimick\PsalmDoctrinePhpMapping;
 
+use Klimick\PsalmDoctrinePhpMapping\Hook\InverseSideAssociationAnalysis;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
@@ -18,5 +19,11 @@ final class Plugin implements PluginEntryPointInterface
             $registration->addStubFile($stub);
         }
 
+        $registerHook = function(string $hook) use ($registration): void {
+            class_exists($hook);
+            $registration->registerHooksFromClass($hook);
+        };
+
+        $registerHook(InverseSideAssociationAnalysis::class);
     }
 }

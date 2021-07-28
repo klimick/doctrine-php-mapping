@@ -25,5 +25,6 @@
     <plugins>
         <pluginClass class="Klimick\PsalmShowType\ShowTypePlugin"/>
         <pluginClass class="Klimick\PsalmDoctrinePhpMapping\Plugin"/>
+        <pluginClass class="Fp\Psalm\FunctionalPlugin"/>
     </plugins>
 </psalm>
