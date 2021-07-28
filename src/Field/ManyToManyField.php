@@ -13,7 +13,7 @@ use Klimick\DoctrinePhpMapping\Field\Common\JoinTableTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\OrphanRemovalTrait;
 
 /**
- * @template TEntity of object
+ * @template-covariant TEntity of object
  * @psalm-immutable
  */
 final class ManyToManyField

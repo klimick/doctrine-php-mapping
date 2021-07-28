@@ -11,8 +11,9 @@ use Psalm\Plugin\EventHandler\Event\AfterMethodCallAnalysisEvent;
 use Klimick\DoctrinePhpMapping\Field\InverseSide\ManyToManyField;
 use Klimick\DoctrinePhpMapping\Field\InverseSide\OneToManyField;
 use Klimick\DoctrinePhpMapping\Field\InverseSide\OneToOneField;
+use Klimick\DoctrinePhpMapping\Field\OwningSide;
 use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
-use Klimick\PsalmDoctrinePhpMapping\Issue\RaiseIssue;
+use Klimick\PsalmDoctrinePhpMapping\RaiseIssue;
 use Fp\Functional\Option\Option;
 use function Fp\Collection\first;
 use function Fp\Collection\firstOf;
@@ -22,6 +23,9 @@ use function Fp\Evidence\proveString;
 use function Fp\Evidence\proveTrue;
 use function Fp\Evidence\proveNonEmptyString;
 
+/**
+ * @psalm-import-type Association from EntityMapping
+ */
 final class InverseSideAssociationAnalysis implements AfterMethodCallAnalysisInterface
 {
     private const METHOD_MANY_TO_MANY = 'manyToMany';
@@ -43,36 +47,61 @@ final class InverseSideAssociationAnalysis implements AfterMethodCallAnalysisInt
     public static function afterMethodCallAnalysis(AfterMethodCallAnalysisEvent $event): void
     {
         Option::do(function() use ($event) {
-            $method_call = yield proveOf($event->getExpr(), Node\Expr\MethodCall::class);
-            $method_identifier = yield proveOf($method_call->name, Node\Identifier::class);
+            $statements_source = $event->getStatementsSource();
 
-            yield proveTrue(in_array($method_identifier->name, self::SUPPORTED_METHODS, true));
+            $method_call = yield proveOf($event->getExpr(), Node\Expr\MethodCall::class);
+            $method_name = yield proveOf($method_call->name, Node\Identifier::class)->map(fn($id) => $id->name);
+
+            yield proveTrue(in_array($method_name, self::SUPPORTED_METHODS, true));
 
             $mapped_by_field = yield self::getMappedByField($event);
             $mapping_class = yield self::getAssociationMappingClass($method_call);
-            $association_fields = yield self::getAssociationFields($method_identifier->name, $mapping_class);
+            $association_fields = self::getAssociationFields($method_name, $mapping_class);
 
-            if (array_key_exists($mapped_by_field, $association_fields)) {
-                return;
+            if (!array_key_exists($mapped_by_field, $association_fields)) {
+                RaiseIssue::for($statements_source)->noMappedByFieldAtOwningSide(
+                    node: $method_call,
+                    field: $mapped_by_field,
+                    mapping_class: $mapping_class,
+                    association_type: $method_name,
+                );
+            } elseif (!self::isOwningSideAssociation($association_fields[$mapped_by_field], $method_name)) {
+                RaiseIssue::for($statements_source)->invalidAssociationAtOwningSide(
+                    node: $method_call,
+                    field: $mapped_by_field,
+                    mapping_class: $mapping_class,
+                );
             }
-
-            RaiseIssue::for($event->getStatementsSource())
-                ->noMappedByFieldAtOwningSide($method_call, $mapped_by_field, $mapping_class, $method_identifier->name);
         });
     }
 
     /**
-     * @psalm-param InverseSideAssociationAnalysis::METHOD_* $method
-     * @param class-string<EntityMapping<object>> $entity_mapping
-     * @return Option<array<non-empty-string, object>>
+     * @psalm-param InverseSideAssociationAnalysis::METHOD_* $association_method
+     * @param Association $association
      */
-    private static function getAssociationFields(string $method, string $entity_mapping): Option
+    private static function isOwningSideAssociation(object $association, string $association_method): bool
     {
-        return Option::try(fn() => match ($method) {
+        return match ($association_method) {
+            self::METHOD_ONE_TO_ONE => $association::class === OwningSide\OneToOneField::class,
+            self::METHOD_ONE_TO_MANY => $association::class === OwningSide\ManyToOneField::class,
+            self::METHOD_MANY_TO_MANY => $association::class === OwningSide\ManyToManyField::class,
+        };
+    }
+
+    /**
+     * @psalm-param InverseSideAssociationAnalysis::METHOD_* $association_method
+     * @param class-string<EntityMapping<object>> $entity_mapping
+     * @return array<non-empty-string, Association>
+     */
+    private static function getAssociationFields(string $association_method, string $entity_mapping): array
+    {
+        $fields = Option::try(fn() => match ($association_method) {
             self::METHOD_ONE_TO_ONE => $entity_mapping::oneToOne(),
             self::METHOD_ONE_TO_MANY => $entity_mapping::manyToOne(),
             self::METHOD_MANY_TO_MANY => $entity_mapping::manyToMany(),
         });
+
+        return $fields->getOrElse([]);
     }
 
     /**

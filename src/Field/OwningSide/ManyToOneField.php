@@ -9,9 +9,9 @@ use Klimick\DoctrinePhpMapping\Field\Common\FetchTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\JoinColumnTrait;
 
 /**
- * @template TEntity of object
- * @template TInversedBy of non-empty-literal-string
- * @template TNullable of bool
+ * @template-covariant TEntity of object
+ * @template-covariant TInversedBy of non-empty-literal-string
+ * @template-covariant TNullable of bool
  * @psalm-immutable
  */
 final class ManyToOneField

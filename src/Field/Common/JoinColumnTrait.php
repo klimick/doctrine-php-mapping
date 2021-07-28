@@ -21,7 +21,7 @@ trait JoinColumnTrait
         string $referencedColumnName = 'id',
         bool   $unique = false,
         string $onDelete = JoinColumn::ON_DELETE_NO_ACTION,
-    ): self
+    ): static
     {
         $self = clone $this;
         $self->joinColumn = new JoinColumn($name, $referencedColumnName, $unique, $onDelete);

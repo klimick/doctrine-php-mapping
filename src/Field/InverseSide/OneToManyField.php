@@ -12,8 +12,8 @@ use Klimick\DoctrinePhpMapping\Field\Common\FetchTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\OrphanRemovalTrait;
 
 /**
- * @template TEntity of object
- * @template TMappedBy of non-empty-literal-string
+ * @template-covariant TEntity of object
+ * @template-covariant TMappedBy of non-empty-literal-string
  * @psalm-immutable
  */
 final class OneToManyField

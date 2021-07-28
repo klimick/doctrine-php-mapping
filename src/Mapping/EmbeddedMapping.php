@@ -7,7 +7,7 @@ namespace Klimick\DoctrinePhpMapping\Mapping;
 use Klimick\DoctrinePhpMapping\Field\Field;
 
 /**
- * @template-covariant TEmbedded of object
+ * @template TEmbedded of object
  */
 abstract class EmbeddedMapping
 {

@@ -10,8 +10,8 @@ use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
 use Klimick\DoctrinePhpMapping\Field\Common\IndexByTrait;
 
 /**
- * @template TEntity of object
- * @template TMappedBy of non-empty-literal-string
+ * @template-covariant TEntity of object
+ * @template-covariant TMappedBy of non-empty-literal-string
  * @psalm-immutable
  */
 final class ManyToManyField

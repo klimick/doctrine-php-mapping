@@ -14,7 +14,7 @@ use Klimick\DoctrinePhpMapping\Field\OwningSide;
 use Klimick\DoctrinePhpMapping\Field\InverseSide;
 
 /**
- * @template-covariant TEntity of object
+ * @template TEntity of object
  */
 abstract class MappedSuperclassMapping
 {

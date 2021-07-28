@@ -11,9 +11,9 @@ use Klimick\DoctrinePhpMapping\Field\Common\JoinColumnTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\OrphanRemovalTrait;
 
 /**
- * @template TEntity of object
- * @template TInversedBy of non-empty-literal-string
- * @template TNullable of bool
+ * @template-covariant TEntity of object
+ * @template-covariant TInversedBy of non-empty-literal-string
+ * @template-covariant TNullable of bool
  * @psalm-immutable
  */
 final class OneToOneField

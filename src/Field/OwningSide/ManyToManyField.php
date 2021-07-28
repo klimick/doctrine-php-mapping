@@ -12,8 +12,8 @@ use Klimick\DoctrinePhpMapping\Field\Common\CascadeTrait;
 use Klimick\DoctrinePhpMapping\Field\Common\JoinTableTrait;
 
 /**
- * @template TEntity of object
- * @template TInversedBy of non-empty-literal-string
+ * @template-covariant TEntity of object
+ * @template-covariant TInversedBy of non-empty-literal-string
  * @psalm-immutable
  */
 final class ManyToManyField

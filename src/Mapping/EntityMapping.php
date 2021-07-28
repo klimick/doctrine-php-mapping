@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnusedAliasInspection */
 
 declare(strict_types=1);
 
@@ -16,6 +16,28 @@ use Klimick\DoctrinePhpMapping\Mapping\Inheritance\InheritanceInterface;
 use Klimick\DoctrinePhpMapping\Mapping\Inheritance\NoInheritance;
 
 /**
+ * @psalm-type ManyToManyAssociation
+ *     = ManyToManyField<object>
+ *     | OwningSide\ManyToManyField<object, non-empty-literal-string>
+ *     | InverseSide\ManyToManyField<object, non-empty-literal-string>
+ *
+ * @psalm-type ManyToOneAssociation
+ *     = ManyToOneField<object, bool>
+ *     | OwningSide\ManyToOneField<object, non-empty-literal-string, bool>
+ *
+ * @psalm-type OneToOneAssociation
+ *     = OneToOneField<object, bool>
+ *     | OwningSide\OneToOneField<object, non-empty-literal-string, bool>
+ *     | InverseSide\OneToOneField<object, non-empty-literal-string>
+ *
+ * @psalm-type OneToManyAssociation = InverseSide\OneToManyField<object, non-empty-literal-string>
+ *
+ * @psalm-type Association
+ *     = ManyToManyAssociation
+ *     | ManyToOneAssociation
+ *     | OneToOneAssociation
+ *     | OneToManyAssociation
+ *
  * @template-covariant TEntity of object
  */
 abstract class EntityMapping
@@ -56,7 +78,7 @@ abstract class EntityMapping
     }
 
     /**
-     * @return array<non-empty-literal-string, ManyToManyField | OwningSide\ManyToManyField | InverseSide\ManyToManyField>
+     * @return array<non-empty-literal-string, ManyToManyAssociation>
      */
     public static function manyToMany(): array
     {
@@ -64,7 +86,7 @@ abstract class EntityMapping
     }
 
     /**
-     * @return array<non-empty-literal-string, ManyToOneField | OwningSide\ManyToOneField>
+     * @return array<non-empty-literal-string, ManyToOneAssociation>
      */
     public static function manyToOne(): array
     {
@@ -72,7 +94,7 @@ abstract class EntityMapping
     }
 
     /**
-     * @return array<non-empty-literal-string, InverseSide\OneToManyField>
+     * @return array<non-empty-literal-string, OneToManyAssociation>
      */
     public static function oneToMany(): array
     {
@@ -80,7 +102,7 @@ abstract class EntityMapping
     }
 
     /**
-     * @return array<non-empty-literal-string, OneToOneField | OwningSide\OneToOneField | InverseSide\OneToOneField>
+     * @return array<non-empty-literal-string, OneToOneAssociation>
      */
     public static function oneToOne(): array
     {
