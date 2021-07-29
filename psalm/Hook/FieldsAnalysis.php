@@ -80,8 +80,13 @@ final class FieldsAnalysis implements AfterFunctionLikeAnalysisInterface
             }
 
             $type_from_entity = $entity->properties[$field_info->name]->type ?? Type::getMixed();
+            $atomics_count_from_mapping = count($field_info->type->getAtomicTypes());
+            $atomics_count_from_entity = count($type_from_entity->getAtomicTypes());
 
-            if (!UnionTypeComparator::isContainedBy($codebase, $field_info->type, $type_from_entity)) {
+            $type_matched = $atomics_count_from_mapping === $atomics_count_from_entity &&
+                UnionTypeComparator::isContainedBy($codebase, $field_info->type, $type_from_entity);
+
+            if (!$type_matched) {
                 RaiseIssue::for($event)
                     ->fields()
                     ->propertyTypeMismatchIssue(
