@@ -16,7 +16,7 @@ final class PropertyTypeMismatchIssue extends CodeIssue
             message: implode(' ', [
                 "Property type '{$property}' of entity '{$class}' is incompatible with mapping.",
                 "\nType in mapping: {$in_mapping->getId()}",
-                "\nType in entity: {$in_entity->getId()}"
+                "\nType in class: {$in_entity->getId()}"
             ]),
             code_location: $location
         );
