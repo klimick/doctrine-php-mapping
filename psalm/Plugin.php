@@ -7,6 +7,7 @@ namespace Klimick\PsalmDoctrinePhpMapping;
 use Klimick\PsalmDoctrinePhpMapping\Hook\Association\InverseSideAssociationAnalysis;
 use Klimick\PsalmDoctrinePhpMapping\Hook\Association\OwningSideAssociationAnalysis;
 use Klimick\PsalmDoctrinePhpMapping\Hook\FieldsAnalysis;
+use Klimick\PsalmDoctrinePhpMapping\Hook\ManyToManyAnalysis;
 use Klimick\PsalmDoctrinePhpMapping\Hook\ManyToOneAnalysis;
 use Klimick\PsalmDoctrinePhpMapping\Hook\OneToManyAnalysis;
 use Klimick\PsalmDoctrinePhpMapping\Hook\OneToOneAnalysis;
@@ -35,5 +36,6 @@ final class Plugin implements PluginEntryPointInterface
         $registerHook(OneToOneAnalysis::class);
         $registerHook(ManyToOneAnalysis::class);
         $registerHook(OneToManyAnalysis::class);
+        $registerHook(ManyToManyAnalysis::class);
     }
 }

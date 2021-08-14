@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Klimick\PsalmDoctrinePhpMapping\Helper\Property;
 
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
+use Klimick\DoctrinePhpMapping\Field\ManyToManyField;
 use Klimick\DoctrinePhpMapping\Field\ManyToOneField;
 use Klimick\DoctrinePhpMapping\Field\OneToOneField;
 use Klimick\DoctrinePhpMapping\Field\OwningSide;
@@ -77,7 +78,8 @@ final class ExtractEntityProperties
         return self::getForField($mapping_property_type)
             ->orElse(fn() => self::getForOneToOne($mapping_property_type))
             ->orElse(fn() => self::getForManyToOne($mapping_property_type))
-            ->orElse(fn() => self::getForOneToMany($mapping_property_type));
+            ->orElse(fn() => self::getForOneToMany($mapping_property_type))
+            ->orElse(fn() => self::getForManyToMany($mapping_property_type));
     }
 
     /**
@@ -209,6 +211,34 @@ final class ExtractEntityProperties
                 ->filter(fn($atomic) => InverseSide\OneToManyField::class === $atomic->value);
 
             // OneToMany class keep property type at 0 index
+            $property_type_index = 0;
+
+            $entity_property_atomic = yield at($mapping_property_atomic->type_params, $property_type_index)
+                ->flatMap(fn($union) => GetSingleAtomic::for($union));
+
+            return new Union([
+                new TGenericObject(DoctrineCollection::class, [
+                    new Union([new Type\Atomic\TInt()]),
+                    new Union([$entity_property_atomic]),
+                ])
+            ]);
+        });
+    }
+
+    /**
+     * @return Option<Union>
+     */
+    private static function getForManyToMany(Union $mapping_property_type): Option
+    {
+        return Option::do(function() use ($mapping_property_type) {
+            $mapping_property_atomic = yield GetSingleAtomic::forOf($mapping_property_type, TGenericObject::class)
+                ->filter(fn($atomic) => in_array($atomic->value, [
+                    ManyToManyField::class,
+                    OwningSide\ManyToManyField::class,
+                    InverseSide\ManyToManyField::class,
+                ], true));
+
+            // ManyToMany class keep property type at 0 index
             $property_type_index = 0;
 
             $entity_property_atomic = yield at($mapping_property_atomic->type_params, $property_type_index)
