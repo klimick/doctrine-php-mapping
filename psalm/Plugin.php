@@ -6,11 +6,11 @@ namespace Klimick\PsalmDoctrinePhpMapping;
 
 use Klimick\PsalmDoctrinePhpMapping\Hook\Association\InverseSideAssociationAnalysis;
 use Klimick\PsalmDoctrinePhpMapping\Hook\Association\OwningSideAssociationAnalysis;
-use Klimick\PsalmDoctrinePhpMapping\Hook\FieldsAnalysis;
-use Klimick\PsalmDoctrinePhpMapping\Hook\ManyToManyAnalysis;
-use Klimick\PsalmDoctrinePhpMapping\Hook\ManyToOneAnalysis;
-use Klimick\PsalmDoctrinePhpMapping\Hook\OneToManyAnalysis;
-use Klimick\PsalmDoctrinePhpMapping\Hook\OneToOneAnalysis;
+use Klimick\PsalmDoctrinePhpMapping\Hook\Property\FieldsAnalysis;
+use Klimick\PsalmDoctrinePhpMapping\Hook\Property\ManyToManyAnalysis;
+use Klimick\PsalmDoctrinePhpMapping\Hook\Property\ManyToOneAnalysis;
+use Klimick\PsalmDoctrinePhpMapping\Hook\Property\OneToManyAnalysis;
+use Klimick\PsalmDoctrinePhpMapping\Hook\Property\OneToOneAnalysis;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;

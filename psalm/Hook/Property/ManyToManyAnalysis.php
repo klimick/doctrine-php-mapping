@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Klimick\PsalmDoctrinePhpMapping\Hook;
+namespace Klimick\PsalmDoctrinePhpMapping\Hook\Property;
 
 use PhpParser\Node;
 use Fp\Functional\Option\Option;
@@ -13,12 +13,12 @@ use Psalm\Plugin\EventHandler\AfterFunctionLikeAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterFunctionLikeAnalysisEvent;
 use function Fp\Evidence\proveOf;
 
-final class ManyToOneAnalysis implements AfterFunctionLikeAnalysisInterface
+final class ManyToManyAnalysis implements AfterFunctionLikeAnalysisInterface
 {
     public static function afterStatementAnalysis(AfterFunctionLikeAnalysisEvent $event): ?bool
     {
         Option::do(function() use ($event) {
-            $entity_properties = yield self::getManyToOneMethod($event)
+            $entity_properties = yield self::getManyToManyMethod($event)
                 ->flatMap(fn($class_method) => ExtractEntityProperties::by($class_method, $event));
 
             $entity_class_storage = yield GetMappingClassStorage::for($event);
@@ -36,11 +36,11 @@ final class ManyToOneAnalysis implements AfterFunctionLikeAnalysisInterface
     /**
      * @return Option<Node\Stmt\ClassMethod>
      */
-    private static function getManyToOneMethod(AfterFunctionLikeAnalysisEvent $event): Option
+    private static function getManyToManyMethod(AfterFunctionLikeAnalysisEvent $event): Option
     {
         return proveOf($event->getStmt(), Node\Stmt\ClassMethod::class)->filter(
             fn($class_method) => proveOf($class_method->name, Node\Identifier::class)
-                ->map(fn($id) => 'manyToOne' === $id->name)
+                ->map(fn($id) => 'manyToMany' === $id->name)
                 ->getOrElse(false)
         );
     }
