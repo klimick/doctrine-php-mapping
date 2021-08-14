@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Klimick\PsalmDoctrinePhpMapping\Helper\Property;
 
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Klimick\DoctrinePhpMapping\Field\ManyToOneField;
 use Klimick\DoctrinePhpMapping\Field\OneToOneField;
 use Klimick\DoctrinePhpMapping\Field\OwningSide;
@@ -18,6 +19,7 @@ use Klimick\PsalmDoctrinePhpMapping\Helper\ReturnTypeFinder;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use Psalm\Plugin\EventHandler\Event\AfterFunctionLikeAnalysisEvent;
+use Psalm\Type;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
@@ -74,7 +76,8 @@ final class ExtractEntityProperties
     {
         return self::getForField($mapping_property_type)
             ->orElse(fn() => self::getForOneToOne($mapping_property_type))
-            ->orElse(fn() => self::getForManyToOne($mapping_property_type));
+            ->orElse(fn() => self::getForManyToOne($mapping_property_type))
+            ->orElse(fn() => self::getForOneToMany($mapping_property_type));
     }
 
     /**
@@ -194,5 +197,29 @@ final class ExtractEntityProperties
 
         return at($mapping_property_atomic->type_params, $property_nullability_index)
             ->flatMap(fn($isNullable) => Nullability::fromTypelevel($isNullable));
+    }
+
+    /**
+     * @return Option<Union>
+     */
+    private static function getForOneToMany(Union $mapping_property_type): Option
+    {
+        return Option::do(function() use ($mapping_property_type) {
+            $mapping_property_atomic = yield GetSingleAtomic::forOf($mapping_property_type, TGenericObject::class)
+                ->filter(fn($atomic) => InverseSide\OneToManyField::class === $atomic->value);
+
+            // OneToMany class keep property type at 0 index
+            $property_type_index = 0;
+
+            $entity_property_atomic = yield at($mapping_property_atomic->type_params, $property_type_index)
+                ->flatMap(fn($union) => GetSingleAtomic::for($union));
+
+            return new Union([
+                new TGenericObject(DoctrineCollection::class, [
+                    new Union([new Type\Atomic\TInt()]),
+                    new Union([$entity_property_atomic]),
+                ])
+            ]);
+        });
     }
 }
