@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Klimick\PsalmDoctrinePhpMapping\Helper\Property;
 
-use Psalm\Type;
+use Klimick\DoctrinePhpMapping\Field\OneToOneField;
+use Klimick\DoctrinePhpMapping\Field\OwningSide;
+use Klimick\DoctrinePhpMapping\Field\InverseSide;
+use Klimick\PsalmDoctrinePhpMapping\Helper\Nullability;
 use Fp\Functional\Option\Option;
 use Klimick\DoctrinePhpMapping\Field\Field;
 use Klimick\DoctrinePhpMapping\Field\IdField;
@@ -22,9 +25,6 @@ use function Fp\Evidence\proveString;
 
 final class ExtractEntityProperties
 {
-    private const PROPERTY_TYPE_INDEX = 0;
-    private const PROPERTY_NULLABILITY_INDEX = 2;
-
     /**
      * @return Option<non-empty-list<EntityProperty>>
      */
@@ -71,36 +71,88 @@ final class ExtractEntityProperties
      */
     private static function getEntityPropertyType(Union $mapping_property_type): Option
     {
+        return self::getForField($mapping_property_type)
+            ->orElse(fn() => self::getForOneToOne($mapping_property_type));
+    }
+
+    /**
+     * @return Option<Union>
+     */
+    private static function getForField(Union $mapping_property_type): Option
+    {
         return Option::do(function() use ($mapping_property_type) {
             $mapping_property_atomic = yield GetSingleAtomic::forOf($mapping_property_type, TGenericObject::class)
                 ->filter(fn($atomic) => in_array($atomic->value, [Field::class, IdField::class], true));
 
-            $entity_property_atomic = yield at($mapping_property_atomic->type_params, self::PROPERTY_TYPE_INDEX)
+            // Filed class keep property type at 0 index
+            $property_type_index = 0;
+
+            $entity_property_atomic = yield at($mapping_property_atomic->type_params, $property_type_index)
                 ->flatMap(fn($union) => GetSingleAtomic::for($union));
 
-            return yield self::isEntityPropertyNullable($mapping_property_atomic)->map(
-                fn($nullable) => $nullable
-                    ? new Union([new Type\Atomic\TNull(), $entity_property_atomic])
-                    : new Union([$entity_property_atomic])
-            );
+            return yield self::isFieldNullable($mapping_property_atomic)
+                ->map(fn($nullable) => Nullability::makeNullableIf($nullable, $entity_property_atomic));
         });
     }
 
     /**
      * @return Option<bool>
      */
-    private static function isEntityPropertyNullable(TGenericObject $mapping_property_atomic): Option
+    private static function isFieldNullable(TGenericObject $mapping_property_atomic): Option
     {
-        if ($mapping_property_atomic->value !== Field::class) {
+        // Primary key cannot be nullable
+        if ($mapping_property_atomic->value === IdField::class) {
             return Option::some(false);
         }
 
-        return at($mapping_property_atomic->type_params, self::PROPERTY_NULLABILITY_INDEX)
-            ->flatMap(fn($union) => GetSingleAtomic::for($union))
-            ->flatMap(fn($atomic) => match ($atomic::class) {
-                Type\Atomic\TTrue::class => Option::some(true),
-                Type\Atomic\TFalse::class => Option::some(false),
-                default => Option::none(),
-            });
+        // Filed class keep nullability info at 2 index
+        $property_nullability_index = 2;
+
+        return at($mapping_property_atomic->type_params, $property_nullability_index)
+            ->flatMap(fn($isNullable) => Nullability::fromTypelevel($isNullable));
+    }
+
+    /**
+     * @return Option<Union>
+     */
+    private static function getForOneToOne(Union $mapping_property_type): Option
+    {
+        return Option::do(function() use ($mapping_property_type) {
+            $mapping_property_atomic = yield GetSingleAtomic::forOf($mapping_property_type, TGenericObject::class)
+                ->filter(fn($atomic) => in_array($atomic->value, [
+                    OneToOneField::class,
+                    OwningSide\OneToOneField::class,
+                    InverseSide\OneToOneField::class,
+                ], true));
+
+            // OneToOne class keep property type at 0 index
+            $property_type_index = 0;
+
+            $entity_property_atomic = yield at($mapping_property_atomic->type_params, $property_type_index)
+                ->flatMap(fn($union) => GetSingleAtomic::for($union));
+
+            return yield self::isOneToOneNullable($mapping_property_atomic)
+                ->map(fn($nullable) => Nullability::makeNullableIf($nullable, $entity_property_atomic));
+        });
+    }
+
+    /**
+     * @return Option<bool>
+     */
+    private static function isOneToOneNullable(TGenericObject $mapping_property_atomic): Option
+    {
+        // Inverse side of OneToOne cannot be nullable
+        if ($mapping_property_atomic->value === InverseSide\OneToOneField::class) {
+            return Option::some(false);
+        }
+
+        // Plain OneToOne and owning side OneToOne keep nullability at different positions
+        $property_nullability_index = match ($mapping_property_atomic->value) {
+            OneToOneField::class => 1,
+            OwningSide\OneToOneField::class => 2,
+        };
+
+        return at($mapping_property_atomic->type_params, $property_nullability_index)
+            ->flatMap(fn($isNullable) => Nullability::fromTypelevel($isNullable));
     }
 }
