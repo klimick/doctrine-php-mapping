@@ -8,7 +8,6 @@ use Fp\Functional\Option\Option;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use function Fp\Evidence\proveOf;
-use function Symfony\Component\String\s;
 
 final class ReturnTypeFinder extends NodeVisitorAbstract
 {

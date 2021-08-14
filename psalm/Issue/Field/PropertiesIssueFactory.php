@@ -10,7 +10,7 @@ use Psalm\CodeLocation;
 use Psalm\IssueBuffer;
 use Psalm\StatementsSource;
 
-final class FieldsIssueFactory
+final class PropertiesIssueFactory
 {
     public function __construct(private StatementsSource $source)
     {

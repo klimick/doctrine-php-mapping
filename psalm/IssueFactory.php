@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Klimick\PsalmDoctrinePhpMapping;
 
-use Klimick\PsalmDoctrinePhpMapping\Issue\Field\FieldsIssueFactory;
 use Psalm\StatementsSource;
+use Klimick\PsalmDoctrinePhpMapping\Issue\Field\PropertiesIssueFactory;
 use Klimick\PsalmDoctrinePhpMapping\Issue\Association\AssociationIssuesFactory;
 
 final class IssueFactory
@@ -19,8 +19,8 @@ final class IssueFactory
         return new AssociationIssuesFactory($this->source);
     }
 
-    public function fields(): FieldsIssueFactory
+    public function properties(): PropertiesIssueFactory
     {
-        return new FieldsIssueFactory($this->source);
+        return new PropertiesIssueFactory($this->source);
     }
 }

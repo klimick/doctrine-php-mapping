@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Klimick\PsalmDoctrinePhpMapping\Hook;
+namespace Klimick\PsalmDoctrinePhpMapping\Helper\Property;
 
 use PhpParser\Node;
 use Psalm\Type\Union;
