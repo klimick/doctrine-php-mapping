@@ -10,6 +10,9 @@ use Klimick\DoctrinePhpMapping\Field\ManyToOneField;
 use Klimick\DoctrinePhpMapping\Field\OneToOneField;
 use Klimick\DoctrinePhpMapping\Field\OwningSide;
 use Klimick\DoctrinePhpMapping\Field\InverseSide;
+use Klimick\DoctrinePhpMapping\Mapping\EmbeddedMapping;
+use Klimick\DoctrinePhpMapping\Mapping\EntityMapping;
+use Klimick\DoctrinePhpMapping\Mapping\MappedSuperclassMapping;
 use Klimick\PsalmDoctrinePhpMapping\Helper\Nullability;
 use Fp\Functional\Option\Option;
 use Klimick\DoctrinePhpMapping\Field\Field;
@@ -25,7 +28,9 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 use function Fp\Collection\at;
+use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
+use function Fp\Evidence\proveTrue;
 
 final class ExtractEntityProperties
 {
@@ -39,29 +44,67 @@ final class ExtractEntityProperties
         $traverser->addVisitor($visitor);
         $traverser->traverse($class_method->stmts ?? []);
 
-        return Option::do(function() use ($visitor, $event) {
+        return Option::do(function() use ($visitor, $class_method, $event) {
             $return_node = yield $visitor->getReturn();
             $property_nodes = yield $visitor->getFieldNodes();
+            $method_data = yield self::getMethodData($class_method, $event);
 
             return yield GetNodeType::for($return_node, $event)
                 ->flatMap(fn($union) => GetSingleAtomic::forOf($union, TKeyedArray::class))
-                ->flatMap(fn($atomic) => self::mapFieldsToProperties($atomic, $property_nodes));
+                ->flatMap(fn($atomic) => self::mapFieldsToProperties($event, $atomic, $property_nodes, $method_data));
+        });
+    }
+
+    /**
+     * @return Option<array<string, mixed>>
+     */
+    private static function getMethodData(Node\Stmt\ClassMethod $class_method, AfterFunctionLikeAnalysisEvent $event): Option
+    {
+        return Option::do(function() use ($class_method, $event) {
+            $mapping_class = yield Option::fromNullable($event->getContext()->self)
+                ->filter(fn($class) => is_subclass_of($class, EntityMapping::class) ||
+                    is_subclass_of($class, EmbeddedMapping::class) ||
+                    is_subclass_of($class, MappedSuperclassMapping::class));
+
+            $method_name = yield proveOf($class_method->name, Node\Identifier::class)
+                ->map(fn($id) => $id->name);
+
+            /** @var mixed $method_data */
+            $method_data = yield Option::try(fn(): mixed => call_user_func([$mapping_class, $method_name]));
+            yield proveTrue(is_array($method_data));
+
+            $valid_method_data = [];
+
+            foreach ($method_data as $key => $_val) {
+                yield proveTrue(is_string($key));
+
+                /** @psalm-suppress MixedAssignment */
+                $valid_method_data[$key] = $_val;
+            }
+
+            return $valid_method_data;
         });
     }
 
     /**
      * @param array<string, Node> $property_nodes
+     * @param array<string, mixed> $method_data
      * @return Option<non-empty-list<EntityProperty>>
      */
-    private static function mapFieldsToProperties(TKeyedArray $atomic, array $property_nodes): Option
+    private static function mapFieldsToProperties(
+        AfterFunctionLikeAnalysisEvent $event,
+        TKeyedArray $atomic,
+        array $property_nodes,
+        array $method_data,
+    ): Option
     {
-        return Option::do(function() use ($atomic, $property_nodes) {
+        return Option::do(function() use ($event, $atomic, $property_nodes, $method_data) {
             $entity_properties = [];
 
             foreach ($atomic->properties as $key => $mapping_property_type) {
                 $property_name = yield proveString($key);
                 $property_node = yield at($property_nodes, $property_name);
-                $property_type = yield self::getEntityPropertyType($mapping_property_type);
+                $property_type = yield self::getEntityPropertyType($event, $property_node, $property_name, $mapping_property_type, $method_data);
 
                 $entity_properties[] = new EntityProperty($property_name, $property_node, $property_type);
             }
@@ -71,15 +114,22 @@ final class ExtractEntityProperties
     }
 
     /**
+     * @param array<string, mixed> $method_data
      * @return Option<Union>
      */
-    private static function getEntityPropertyType(Union $mapping_property_type): Option
+    private static function getEntityPropertyType(
+        AfterFunctionLikeAnalysisEvent $event,
+        Node $property_node,
+        string $property_name,
+        Union $mapping_property_type,
+        array $method_data,
+    ): Option
     {
         return self::getForField($mapping_property_type)
             ->orElse(fn() => self::getForOneToOne($mapping_property_type))
             ->orElse(fn() => self::getForManyToOne($mapping_property_type))
-            ->orElse(fn() => self::getForOneToMany($mapping_property_type))
-            ->orElse(fn() => self::getForManyToMany($mapping_property_type));
+            ->orElse(fn() => self::getForOneToMany($event, $mapping_property_type, $property_node, $property_name, $method_data))
+            ->orElse(fn() => self::getForManyToMany($event, $mapping_property_type, $property_node, $property_name, $method_data));
     }
 
     /**
@@ -202,11 +252,18 @@ final class ExtractEntityProperties
     }
 
     /**
+     * @param array<string, mixed> $method_data
      * @return Option<Union>
      */
-    private static function getForOneToMany(Union $mapping_property_type): Option
+    private static function getForOneToMany(
+        AfterFunctionLikeAnalysisEvent $event,
+        Union $mapping_property_type,
+        Node $property_node,
+        string $property_name,
+        array $method_data,
+    ): Option
     {
-        return Option::do(function() use ($mapping_property_type) {
+        return Option::do(function() use ($event, $mapping_property_type, $property_node, $property_name, $method_data) {
             $mapping_property_atomic = yield GetSingleAtomic::forOf($mapping_property_type, TGenericObject::class)
                 ->filter(fn($atomic) => InverseSide\OneToManyField::class === $atomic->value);
 
@@ -216,21 +273,28 @@ final class ExtractEntityProperties
             $entity_property_atomic = yield at($mapping_property_atomic->type_params, $property_type_index)
                 ->flatMap(fn($union) => GetSingleAtomic::for($union));
 
+            $key_type = yield IndexByPropertyTypeFetcher::fetchFor($event, $property_node, $property_name, $method_data);
+            $val_type = new Union([$entity_property_atomic]);
+
             return new Union([
-                new TGenericObject(DoctrineCollection::class, [
-                    new Union([new Type\Atomic\TInt()]),
-                    new Union([$entity_property_atomic]),
-                ])
+                new TGenericObject(DoctrineCollection::class, [$key_type, $val_type])
             ]);
         });
     }
 
     /**
+     * @param array<string, mixed> $method_data
      * @return Option<Union>
      */
-    private static function getForManyToMany(Union $mapping_property_type): Option
+    private static function getForManyToMany(
+        AfterFunctionLikeAnalysisEvent $event,
+        Union $mapping_property_type,
+        Node $property_node,
+        string $property_name,
+        array $method_data,
+    ): Option
     {
-        return Option::do(function() use ($mapping_property_type) {
+        return Option::do(function() use ($event, $property_node, $mapping_property_type, $property_name, $method_data) {
             $mapping_property_atomic = yield GetSingleAtomic::forOf($mapping_property_type, TGenericObject::class)
                 ->filter(fn($atomic) => in_array($atomic->value, [
                     ManyToManyField::class,
@@ -244,11 +308,11 @@ final class ExtractEntityProperties
             $entity_property_atomic = yield at($mapping_property_atomic->type_params, $property_type_index)
                 ->flatMap(fn($union) => GetSingleAtomic::for($union));
 
+            $key_type = yield IndexByPropertyTypeFetcher::fetchFor($event, $property_node, $property_name, $method_data);
+            $val_type = new Union([$entity_property_atomic]);
+
             return new Union([
-                new TGenericObject(DoctrineCollection::class, [
-                    new Union([new Type\Atomic\TInt()]),
-                    new Union([$entity_property_atomic]),
-                ])
+                new TGenericObject(DoctrineCollection::class, [$key_type, $val_type])
             ]);
         });
     }

@@ -9,6 +9,7 @@ namespace Klimick\DoctrinePhpMapping\Field\Common;
  */
 trait IndexByTrait
 {
+    /** @var null|non-empty-literal-string */
     public null|string $indexBy = null;
 
     /**

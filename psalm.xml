@@ -14,6 +14,11 @@
                 <directory name="psalm"/>
             </errorLevel>
         </InternalClass>
+        <InternalProperty>
+            <errorLevel type="suppress">
+                <directory name="psalm"/>
+            </errorLevel>
+        </InternalProperty>
     </issueHandlers>
     <projectFiles>
         <directory name="src"/>

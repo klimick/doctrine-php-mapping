@@ -16,6 +16,22 @@ final class PropertiesIssueFactory
     {
     }
 
+    public function indexByPropertyDoesNotExists(Node $node, string $class, string $property): void
+    {
+        $location = new CodeLocation($this->source, $node);
+        $issue = new IndexByPropertyDoesNotExistsIssue($class, $property, $location);
+
+        IssueBuffer::accepts($issue, $this->source->getSuppressedIssues());
+    }
+
+    public function indexByPropertyTypeIsNotAllowed(Node $node, string $class, string $property, Type\Union $actual_type): void
+    {
+        $location = new CodeLocation($this->source, $node);
+        $issue = new IndexByPropertyTypeIsNotAllowedIssue($class, $property, $actual_type, $location);
+
+        IssueBuffer::accepts($issue, $this->source->getSuppressedIssues());
+    }
+
     public function propertyDoesNotExistInEntity(Node $node, string $class, string $property): void
     {
         $location = new CodeLocation($this->source, $node);
